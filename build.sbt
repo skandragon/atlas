@@ -8,7 +8,9 @@ lazy val root = project.in(file("."))
     `atlas-core`,
     `atlas-jmh`,
     `atlas-json`,
+    `atlas-lwcapi`,
     `atlas-module-akka`,
+    `atlas-module-lwcapi`,
     `atlas-module-webapi`,
     `atlas-standalone`,
     `atlas-test`,
@@ -63,12 +65,30 @@ lazy val `atlas-json` = project
     Dependencies.jodaConvert
   ))
 
+lazy val `atlas-lwcapi` = project
+  .configure(BuildSettings.profile)
+  .dependsOn(`atlas-akka`, `atlas-core`, `atlas-json`, `atlas-test` % "test")
+  .settings(libraryDependencies ++= Seq(
+    Dependencies.spectatorSandbox,
+    Dependencies.redisclient,
+    Dependencies.akkaTestkit % "test",
+    Dependencies.sprayTestkit % "test"
+  ))
+
 lazy val `atlas-module-akka` = project
   .configure(BuildSettings.profile)
   .dependsOn(`atlas-akka`)
   .settings(libraryDependencies ++= Seq(
     Dependencies.guiceCore,
     Dependencies.guiceMulti,
+    Dependencies.iepGuice
+  ))
+
+lazy val `atlas-module-lwcapi` = project
+  .configure(BuildSettings.profile)
+  .dependsOn(`atlas-lwcapi`)
+  .settings(libraryDependencies ++= Seq(
+    Dependencies.guiceCore,
     Dependencies.iepGuice
   ))
 
@@ -82,7 +102,7 @@ lazy val `atlas-module-webapi` = project
 
 lazy val `atlas-standalone` = project
   .configure(BuildSettings.profile)
-  .dependsOn(`atlas-module-akka`, `atlas-module-webapi`)
+  .dependsOn(`atlas-module-akka`, `atlas-module-lwcapi`, `atlas-module-webapi`)
   .settings(libraryDependencies ++= Seq(
     Dependencies.iepGuice,
     Dependencies.guiceCore,
